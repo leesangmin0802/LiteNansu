@@ -1,0 +1,18 @@
+{
+  "name": "litenansu",
+  "version": "0.1.0",
+  "description": "Seeded TypeScript PRNGs and an offline browser lab for speed and statistical diagnostics.",
+  "license": "MIT AND BSD-3-Clause AND CC0-1.0",
+  "keywords": ["prng", "typescript", "xoshiro128", "mt19937", "simulation", "random"],
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "experiment": "node src/experiment.ts",
+    "export": "node src/export.ts",
+    "dashboard": "node src/dashboard.ts",
+    "build": "node src/dashboard.ts",
+    "check": "node src/dashboard.ts --check"
+  }
+}

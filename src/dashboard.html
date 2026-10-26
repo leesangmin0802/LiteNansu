@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LiteNansu · 난수 실험실</title>
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#f5f6f8,#101419);--surface:light-dark(#fff,#191f27);--ink:light-dark(#18212c,#e7edf5);--muted:light-dark(#596575,#a6b2c2);--line:light-dark(#dce2e9,#35404d);--a:light-dark(#007b77,#43d4bc);--b:light-dark(#7353c5,#b99aff);--soft:light-dark(#e8eeef,#25363a)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,sans-serif}main{max-width:1240px;margin:auto;padding:48px 32px}header{display:flex;justify-content:space-between;gap:24px;align-items:flex-end}h1{font-size:36px;letter-spacing:-1.5px;margin:4px 0 8px;line-height:1.2}h2{font-size:17px;margin:0 0 6px}p{margin:0;color:var(--muted)}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--a);font-weight:650}.meta{font-size:12px;text-align:right}.controls{display:flex;align-items:center;flex-wrap:wrap;gap:20px;margin:28px 0 22px;padding:16px 0;border-block:1px solid var(--line)}label{display:flex;align-items:center;gap:10px;font-size:13px}select{font:inherit;color:var(--ink);background:var(--surface);padding:8px 30px 8px 12px;border:1px solid var(--line);border-radius:8px}.legend{margin-left:auto;display:flex;gap:18px;font-size:13px}.legend span{display:flex;align-items:center;gap:7px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:var(--a)}.dot.b{background:var(--b);border-radius:2px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}.stat{padding:20px 24px;background:var(--surface);border-radius:14px}.stat .value{font-size:30px;letter-spacing:-1px;margin:4px 0;font-variant-numeric:tabular-nums}.stat small{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.panel{min-width:0;padding:22px;background:var(--surface);border-radius:14px}.wide{grid-column:1/-1}.caption{font-size:12px;color:var(--muted);min-height:22px}.chart{position:relative;margin-top:14px}canvas{display:block;width:100%;height:255px}.detail{font-size:12px;min-height:24px;margin-top:6px;color:var(--muted);font-variant-numeric:tabular-nums}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;margin-top:16px}th,td{text-align:right;padding:12px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:500}.note{margin-top:24px;padding:18px 22px;background:var(--soft);border-radius:12px;font-size:13px;color:var(--ink)}footer{font-size:12px;color:var(--muted);margin-top:22px}button{font:inherit;cursor:pointer}a{color:var(--a)}:focus-visible{outline:3px solid var(--a);outline-offset:4px}@media(max-width:760px){main{padding:28px 16px}header{display:block}.meta{text-align:left;margin-top:14px}.grid{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:14px}.stat .value{font-size:24px}.legend{margin-left:0}.panel{padding:16px}h1{font-size:30px}}@media(max-width:440px){.stats{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between;gap:12px}.stat .value{font-size:24px}.stat small{max-width:110px}canvas{height:240px}.controls{gap:12px}label{flex-wrap:wrap}}
+
+.run-box{background:var(--surface);padding:22px;border-radius:14px;margin-top:24px}.run-controls{display:flex;flex-wrap:wrap;align-items:end;gap:14px;margin-top:16px}.run-controls label{display:grid;gap:6px;min-width:140px;flex:1}.run-controls input{width:100%;min-width:0;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 12px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.actions button{padding:9px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}.actions .primary{background:var(--a);color:var(--surface);border-color:var(--a)}button:disabled{opacity:.5;cursor:default}.run-status{margin-top:12px;font-size:13px;overflow-wrap:anywhere}progress{width:100%;height:8px;accent-color:var(--a);margin-top:12px}.error{color:light-dark(#b82232,#ff9d9d)}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.result-heading{font-size:14px;margin-bottom:16px;color:var(--muted)}.preview-grid{margin-top:20px;margin-bottom:24px}.preview-grid .panel{border:1px solid var(--line)}.meta{max-width:440px;overflow-wrap:anywhere}input:disabled{opacity:.6}@media(max-width:440px){.run-box{padding:16px}.run-controls label{min-width:100%}}
+</style>
+</head>
+<body><main>
+<header><div><div class="eyebrow">LITENANSU / EXPERIMENT LAB</div><h1>작은 난수, 같은 기준으로.</h1><p>생성 속도와 난수의 통계적 특징을 나란히 비교합니다.</p></div><div id="meta" class="meta"></div></header>
+<section class="run-box" aria-labelledby="run-title"><h2 id="run-title">브라우저에서 난수 실험하기</h2><p class="caption">두 생성기에 같은 시드를 적용합니다. 계산 중에도 화면을 조작하거나 중단할 수 있습니다.</p>
+<form id="experiment-form"><div class="run-controls">
+<label>시드 (0~4294967295)<input id="run-seed" type="number" min="0" max="4294967295" step="1" value="12345" required></label>
+<label>품질 표본 수 / 생성기<input id="run-samples" type="number" min="1000" max="10000000" step="1" value="1000000" required></label>
+<label>속도 측정 개수 / 회차<input id="run-count" type="number" min="100000" max="10000000" step="1" value="1000000" required></label>
+<label>반복 횟수<input id="run-rounds" type="number" min="3" max="15" step="1" value="5" required></label>
+</div><div class="actions"><button class="primary" id="start" type="submit">실험 시작</button><button id="cancel" type="button" disabled>중단</button><button id="download" type="button">결과 JSON 저장</button></div></form>
+<progress id="progress" max="100" value="0" aria-label="실험 진행률"></progress><p id="status" class="run-status" role="status" aria-live="polite">준비됨 · 아래에는 저장된 실험 결과가 표시됩니다.</p></section>
+<div class="grid preview-grid"><section class="panel"><h2>생성된 난수의 흐름</h2><p class="caption">새 실험의 처음 64개 값 · 0 이상 1 미만</p><div class="chart"><canvas id="sequence" role="img" aria-label="새로 생성한 난수의 순서별 값"></canvas></div><p id="sequence-detail" class="detail">실험 시작 후 표시됩니다.</p></section>
+<section class="panel"><h2>연속한 두 난수의 위치</h2><p class="caption">x = 앞의 난수 · y = 다음 난수 · 생성기별 최대 1,024쌍</p><div class="chart"><canvas id="scatter" role="img" aria-label="연속한 난수 두 개를 좌표로 표시한 산점도"></canvas></div><p class="detail" id="scatter-detail">실험 시작 후 표시됩니다.</p></section></div>
+<div class="result-heading" id="result-heading">최근 완료된 실험 결과 · 저장된 결과</div>
+<div class="controls"><label>품질 실험 시드 <select id="seed" aria-label="품질 실험 시드"></select></label><label>속도 측정 항목 <select id="mode"><option value="uint32">32비트 정수</option><option value="float">0~1 실수</option><option value="int100">0~99 범위 정수</option></select></label><div class="legend"><span><i class="dot"></i>LiteNansu</span><span><i class="dot b"></i>MT19937</span></div></div>
+<div class="stats" aria-live="polite"><div class="stat"><p>생성 속도 비율</p><div class="value" id="ratio"></div><small>MT19937 대비 / 중앙값</small></div><div class="stat"><p>상태 데이터</p><div class="value">16 B</div><small>MT19937 2,496 B<br>객체 부가 비용 제외</small></div><div class="stat"><p>품질 표본 / 시드</p><div class="value" id="samples"></div><small>생성기별 측정</small></div></div>
+<div class="grid">
+<section class="panel"><h2>생성 처리량</h2><p class="caption">높을수록 빠름 · 백만 개/초 · 막대는 반복 측정 중앙값</p><div class="chart"><canvas id="speed" role="img" aria-label="선택한 출력 형식의 생성기별 초당 처리량"></canvas></div><p class="detail" id="speed-detail"></p></section>
+<section class="panel"><h2>반복 측정의 변동</h2><p class="caption">낮을수록 빠름 · 회차별 소요 시간(ms)</p><div class="chart"><canvas id="rounds" role="img" aria-label="반복 측정 회차별 소요 시간"></canvas></div><p class="detail" id="rounds-detail"></p></section>
+<section class="panel"><h2>상위 바이트 분포</h2><p class="caption">바이트 값 0~255 · 기대 빈도 대비 편차(%)</p><div class="chart"><canvas id="high" role="img" aria-label="상위 바이트의 균등 빈도 대비 편차"></canvas></div><p class="detail" id="high-detail"></p></section>
+<section class="panel"><h2>하위 바이트 분포</h2><p class="caption">바이트 값 0~255 · 기대 빈도 대비 편차(%)</p><div class="chart"><canvas id="low" role="img" aria-label="하위 바이트의 균등 빈도 대비 편차"></canvas></div><p class="detail" id="low-detail"></p></section>
+<section class="panel"><h2>32개 비트의 균형</h2><p class="caption">비트 위치 0=최하위 · 1 빈도의 Z 점수 · 점선 ±3은 참고선</p><div class="chart"><canvas id="bits" role="img" aria-label="각 비트의 1 빈도를 나타낸 Z 점수"></canvas></div><p class="detail" id="bits-detail"></p></section>
+<section class="panel"><h2>출력 사이의 상관관계</h2><p class="caption">출력 간격 1·2·16·64 · 피어슨 상관계수 · 0 부근을 기대</p><div class="chart"><canvas id="lags" role="img" aria-label="출력 간격별 상관계수"></canvas></div><p class="detail" id="lags-detail"></p></section>
+<section class="panel"><h2>주사위 빈도</h2><p class="caption">각 눈의 기대 확률 16.67% · 거부 샘플링으로 범위 편향 제거</p><div class="chart"><canvas id="dice" role="img" aria-label="주사위 눈별 발생 비율"></canvas></div><p class="detail" id="dice-detail"></p></section>
+<section class="panel"><h2>선택한 시드의 수치</h2><p class="caption" id="selected"></p><div class="table-wrap"><table><caption class="sr-only" style="text-align:left">품질 진단 비교</caption><thead><tr><th>측정</th><th>LiteNansu</th><th>MT19937</th></tr></thead><tbody id="metrics"></tbody></table></div><p class="detail">바이트 χ² 자유도 255 · 주사위 χ² 자유도 5</p></section>
+</div>
+<div class="note">이 결과는 <strong>초기 품질 진단</strong>입니다. 개별 수치가 크거나 작다는 이유만으로 합격·불합격을 판정하지 않습니다. 시드와 표본 수를 바꾸어 반복 확인하세요. 긴 주기와 독립 스트림은 별도 분석이 필요합니다.</div>
+<footer>LiteNansu는 xoshiro128** 기반 구현입니다. 속도는 현재 브라우저와 기기, 다른 작업의 영향을 받습니다. 새 결과는 ‘결과 JSON 저장’으로 내려받을 수 있습니다. <a href="results/report.json">초기 저장 결과 JSON</a> · <a href="README.md">사용 방법</a></footer>
+</main>
+<script id="report" type="application/json">__REPORT_DATA__</script>
+<script id="worker-source" type="text/plain">__WORKER_SOURCE__</script>
+<script>
+(() => {
+'use strict';
+let report=JSON.parse(document.getElementById('report').textContent);
+const names=['litenansu','mt19937'],labels=['LiteNansu','MT19937'];
+const seedSelect=document.getElementById('seed'),modeSelect=document.getElementById('mode');
+const fmt=(x,d=2)=>Number(x).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:d});
+function updateReportControls(){
+ const previous=seedSelect.value===''?null:Number(seedSelect.value);seedSelect.replaceChildren();
+ report.config.seeds.forEach(seed=>{const o=document.createElement('option');o.value=seed;o.textContent=seed;seedSelect.append(o)});
+ if(report.config.seeds.includes(previous))seedSelect.value=String(previous);
+ const platform=[report.runtime,report.platform,report.architecture].filter(Boolean).join(' · ');
+ document.getElementById('meta').textContent=`${platform} · ${new Date(report.createdAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})} KST`;
+ document.getElementById('samples').textContent=report.config.samplesPerSeed.toLocaleString('ko-KR');
+}
+updateReportControls();
+let previews=[[],[]],worker=null,workerUrl=null;
+const status=document.getElementById('status'),progress=document.getElementById('progress');
+const charts=new Map();
+function colors(){const s=getComputedStyle(document.documentElement);return ['--a','--b','--ink','--muted','--line'].map(k=>s.getPropertyValue(k).trim())}
+// Resolve light-dark() into browser-computed colors for canvas rendering.
+function resolvedColors(){return colors().map(color=>{const el=document.createElement('span');el.style.color=color;document.body.append(el);const value=getComputedStyle(el).color;el.remove();return value})}
+function draw(id,series,options={}){
+ const canvas=document.getElementById(id),[a,b,ink,muted,line]=resolvedColors();
+ const w=canvas.clientWidth,h=canvas.clientHeight,dpr=devicePixelRatio||1;
+ canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+ const c=canvas.getContext('2d');c.scale(dpr,dpr);c.font='12px system-ui';
+ const p={l:70,r:16,t:14,b:44},pw=w-p.l-p.r,ph=h-p.t-p.b;
+ const n=Math.max(...series.map(values=>values.length)),all=series.flat(),refs=options.refs||[];
+ let lo=Math.min(0,...all,...refs,...(options.domain||[])),hi=Math.max(0,...all,...refs,...(options.domain||[]));
+ if(options.symmetric){const m=Math.max(Math.abs(lo),Math.abs(hi))||1;lo=-m*1.15;hi=m*1.15}else{if(hi===lo)hi=lo+1;hi+=(hi-lo)*.15;if(lo<0)lo-=(hi-lo)*.08}
+ const y=v=>p.t+(hi-v)/(hi-lo)*ph;
+ const x=i=>p.l+(options.bars?(i+.5)/n:n===1?.5:i/(n-1))*pw;
+ c.strokeStyle=line;c.fillStyle=muted;c.textAlign='right';
+ for(let k=0;k<=4;k++){const value=lo+(hi-lo)*k/4,py=y(value);c.beginPath();c.moveTo(p.l,py);c.lineTo(w-p.r,py);c.stroke();c.fillText(Math.abs(value)<.01&&value!==0?value.toFixed(4):fmt(value,options.digits??1),p.l-8,py+4)}
+ c.textAlign='center';const ticks=options.ticks||[0,Math.round((n-1)/3),Math.round(2*(n-1)/3),n-1];
+ [...new Set(ticks)].forEach(i=>c.fillText(options.labels?options.labels[i]:String(i+(options.oneBased?1:0)),x(i),h-24));
+ c.fillText(options.xLabel||'',p.l+pw/2,h-5);
+ if(refs.length){c.save();c.setLineDash([4,4]);c.strokeStyle=muted;refs.forEach(v=>{c.beginPath();c.moveTo(p.l,y(v));c.lineTo(w-p.r,y(v));c.stroke()});c.restore()}
+ c.save();c.beginPath();c.rect(p.l,p.t,pw,ph);c.clip();
+ series.forEach((values,s)=>{c.strokeStyle=s?b:a;c.fillStyle=s?b:a;c.lineWidth=1.5;
+  if(options.bars){const bw=pw/n*.32;values.forEach((v,i)=>c.fillRect(x(i)+(s?1:-1)*bw/2-bw/2,Math.min(y(0),y(v)),bw,Math.abs(y(v)-y(0))))}
+  else{c.beginPath();values.forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.stroke();if(n<20)values.forEach((v,i)=>{if(s)c.fillRect(x(i)-3,y(v)-3,6,6);else{c.beginPath();c.arc(x(i),y(v),3,0,Math.PI*2);c.fill()}})}
+ });c.restore();
+ charts.set(id,{series,options,p,pw,n});
+ canvas.onpointermove=e=>showDetail(e.clientX);
+ canvas.onclick=e=>showDetail(e.clientX);
+ function showDetail(clientX){const f=(clientX-canvas.getBoundingClientRect().left-p.l)/pw;const i=Math.max(0,Math.min(n-1,Math.round(options.bars?f*n-.5:f*(n-1))));document.getElementById(id+'-detail').textContent=`${options.labels?options.labels[i]:i+(options.oneBased?1:0)} · `+series.map((s,k)=>`${labels[k]} ${(s[i]===undefined?'대기 중':fmt(s[i],options.detailDigits??3))}${options.unit||''}`).join(' / ')}
+}
+function renderPreviews(){
+ const hasData=previews.some(values=>values.length);
+ if(!hasData){document.getElementById('sequence-detail').textContent='실험 시작 후 품질 검사 단계에서 표시됩니다.';document.getElementById('scatter-detail').textContent='생성기별 최대 1,024쌍을 표시합니다.';for(const id of ['sequence','scatter']){const canvas=document.getElementById(id);canvas.width=canvas.clientWidth;canvas.height=canvas.clientHeight;const c=canvas.getContext('2d');c.fillStyle=resolvedColors()[3];c.font='13px system-ui';c.textAlign='center';c.fillText('실험을 시작하면 여기에 표시됩니다.',canvas.width/2,canvas.height/2)}return}
+ draw('sequence',previews.map(values=>values.slice(0,64)),{domain:[0,1],oneBased:true,xLabel:'생성 순서',detailDigits:6});
+ const canvas=document.getElementById('scatter'),w=canvas.clientWidth,h=canvas.clientHeight,dpr=devicePixelRatio||1;
+ canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);
+ const [a,b,ink,muted,line]=resolvedColors(),p={l:40,r:14,t:10,b:40},pw=w-p.l-p.r,ph=h-p.t-p.b;
+ c.font='12px system-ui';c.strokeStyle=line;c.fillStyle=muted;
+ for(let k=0;k<=4;k++){const v=k/4,x=p.l+v*pw,y=p.t+(1-v)*ph;c.beginPath();c.moveTo(x,p.t);c.lineTo(x,p.t+ph);c.moveTo(p.l,y);c.lineTo(p.l+pw,y);c.stroke();c.textAlign='center';c.fillText(String(v),x,h-22);c.textAlign='right';c.fillText(String(v),p.l-7,y+4)}
+ c.textAlign='center';c.fillText('앞의 난수 (x)',p.l+pw/2,h-3);
+ c.save();c.beginPath();c.rect(p.l,p.t,pw,ph);c.clip();c.globalAlpha=.5;
+ previews.forEach((values,k)=>{c.fillStyle=k?b:a;for(let i=1;i<values.length;i+=2){const x=p.l+values[i-1]*pw,y=p.t+(1-values[i])*ph;if(k)c.fillRect(x-1.5,y-1.5,3,3);else{c.beginPath();c.arc(x,y,1.6,0,Math.PI*2);c.fill()}}});c.restore();
+ document.getElementById('scatter-detail').textContent=previews.map((v,k)=>`${labels[k]} ${Math.floor(v.length/2).toLocaleString()}쌍`).join(' / ');
+ document.getElementById('sequence-detail').textContent='처음 64개를 표시합니다. 품질 판정은 아래 전체 표본 통계와 함께 확인하세요.';
+}
+function setRunning(running){
+ document.getElementById('start').disabled=running;document.getElementById('cancel').disabled=!running;
+ for(const input of document.querySelectorAll('#experiment-form input'))input.disabled=running;
+}
+function disposeWorker(){if(worker)worker.terminate();if(workerUrl)URL.revokeObjectURL(workerUrl);worker=null;workerUrl=null;setRunning(false)}
+document.getElementById('experiment-form').addEventListener('submit',event=>{
+ event.preventDefault();if(worker)return;
+ const config={seed:Number(document.getElementById('run-seed').value),samples:Number(document.getElementById('run-samples').value),count:Number(document.getElementById('run-count').value),rounds:Number(document.getElementById('run-rounds').value)};
+ status.classList.remove('error');progress.value=0;previews=[[],[]];renderPreviews();
+ status.textContent='시작 중 · 속도 측정 후 난수 생성과 품질 검사를 진행합니다.';
+ document.getElementById('result-heading').textContent='실험 진행 중 · 아래 통계는 이전에 완료된 결과입니다.';
+ try{
+  workerUrl=URL.createObjectURL(new Blob([document.getElementById('worker-source').textContent],{type:'text/javascript'}));
+  worker=new Worker(workerUrl);setRunning(true);
+  worker.onmessage=event=>{const message=event.data;
+   if(message.type==='progress'||message.type==='preview'){progress.value=message.value;status.textContent=message.text;
+    if(message.type==='preview'){previews[names.indexOf(message.name)]=message.preview;renderPreviews()}
+   }else if(message.type==='complete'){
+    report=message.report;updateReportControls();progress.value=100;status.textContent='실험 완료 · 새 난수와 통계로 모든 차트를 갱신했습니다.';
+    document.getElementById('result-heading').textContent='최근 완료된 실험 결과 · 이 브라우저에서 생성';render();disposeWorker();
+   }else if(message.type==='error'){status.textContent='실험 오류: '+message.message;status.classList.add('error');document.getElementById('result-heading').textContent='실험 실패 · 마지막 완료 결과';disposeWorker()}
+  };
+  worker.onerror=event=>{status.textContent='실험을 실행하지 못했습니다: '+event.message;status.classList.add('error');document.getElementById('result-heading').textContent='실험 실패 · 마지막 완료 결과';disposeWorker()};
+  worker.postMessage(config);
+ }catch(error){status.textContent='실험을 시작하지 못했습니다: '+error.message;status.classList.add('error');document.getElementById('result-heading').textContent='실험 실패 · 마지막 완료 결과';disposeWorker()}
+});
+document.getElementById('cancel').addEventListener('click',()=>{disposeWorker();status.textContent='실험 중단 · 아래 통계는 마지막 완료 결과입니다. 위 미리보기에는 중단 전 생성된 값이 남습니다.';document.getElementById('result-heading').textContent='마지막 완료된 실험 결과';});
+document.getElementById('download').addEventListener('click',()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='litenansu-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+function render(){
+ renderPreviews();
+ const selected=names.map(name=>report.diagnostics[name].find(d=>d.seed===Number(seedSelect.value)));
+ const mode=modeSelect.value,benches=names.map(name=>report.benchmark[name][mode]);
+ document.getElementById('ratio').textContent=fmt(benches[0].millionPerSecond/benches[1].millionPerSecond)+'×';
+ draw('speed',benches.map(b=>[b.millionPerSecond]),{bars:true,labels:['생성기 비교'],ticks:[0],xLabel:'백만 개/초',unit:' M/s',detailDigits:2});
+ document.getElementById('speed-detail').textContent=benches.map((b,i)=>`${labels[i]} ${fmt(b.millionPerSecond)} M/s`).join(' / ');
+ draw('rounds',benches.map(b=>b.roundsMs),{oneBased:true,xLabel:'반복 회차',unit:' ms',detailDigits:2});
+ document.getElementById('rounds-detail').textContent=`${report.config.count.toLocaleString('ko-KR')}개 × ${report.config.rounds}회 · 속도 실험 시드 ${report.config.seeds[0]}`;
+ // Use the same y-domain for upper/lower byte comparison.
+ const expected=report.config.samplesPerSeed/256;
+ const byteValues=key=>selected.map(d=>d[key].bins.map(v=>(v/expected-1)*100));
+ const high=byteValues('highByte'),low=byteValues('lowByte');
+ const byteMax=Math.max(...high.flat().map(Math.abs),...low.flat().map(Math.abs));
+ for(const [id,values,key] of [['high',high,'highByte'],['low',low,'lowByte']]){
+  draw(id,values,{symmetric:true,domain:[-byteMax,byteMax],refs:[0],xLabel:'바이트 값',unit:'%',detailDigits:2});
+  document.getElementById(id+'-detail').textContent=selected.map((d,i)=>`${labels[i]} χ² ${fmt(d[key].chiSquare)}`).join(' / ');
+ }
+ draw('bits',selected.map(d=>d.bitZScores),{bars:true,symmetric:true,refs:[-3,0,3],xLabel:'비트 위치',unit:' Z',detailDigits:3});
+ draw('lags',selected.map(d=>d.correlations.map(v=>v.value)),{bars:true,symmetric:true,refs:[0],ticks:[0,1,2,3],labels:selected[0].correlations.map(v=>String(v.lag)),xLabel:'출력 간격',digits:4,detailDigits:6});
+ draw('dice',selected.map(d=>d.dice.bins.map(v=>v/report.config.samplesPerSeed*100)),{bars:true,refs:[100/6],ticks:[0,1,2,3,4,5],labels:['1','2','3','4','5','6'],xLabel:'주사위 눈',unit:'%',detailDigits:3});
+ document.getElementById('bits-detail').textContent='Z 점수 = (관측 빈도 − 기대 빈도) / 표준편차';
+ document.getElementById('lags-detail').textContent='선택한 네 간격의 상관관계만 측정합니다.';
+ document.getElementById('dice-detail').textContent=selected.map((d,i)=>`${labels[i]} χ² ${fmt(d.dice.chiSquare)}`).join(' / ');
+ document.getElementById('selected').textContent=`시드 ${seedSelect.value} · 결과에 마우스를 올리거나 터치하면 값 표시`;
+ const rows=[['평균',d=>fmt(d.mean,6)],['상위 바이트 χ²',d=>fmt(d.highByte.chiSquare)],['하위 바이트 χ²',d=>fmt(d.lowByte.chiSquare)],['최대 비트 |Z|',d=>fmt(Math.max(...d.bitZScores.map(Math.abs)),3)],['주사위 χ²',d=>fmt(d.dice.chiSquare)],['원주율 추정',d=>fmt(d.monteCarloPi,6)]];
+ const tbody=document.getElementById('metrics');tbody.replaceChildren();rows.forEach(([label,value])=>{const tr=document.createElement('tr');[label,...selected.map(value)].forEach(text=>{const td=document.createElement('td');td.textContent=text;tr.append(td)});tbody.append(tr)});
+}
+seedSelect.addEventListener('change',render);modeSelect.addEventListener('change',render);
+let resizeTimer;new ResizeObserver(()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(render,60)}).observe(document.querySelector('.grid'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);render();
+})();
+</script></body></html>
