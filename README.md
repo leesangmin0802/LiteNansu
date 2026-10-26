@@ -114,20 +114,6 @@ litenansu/
 
 화면은 `src/dashboard.html`을 수정한 뒤 `npm run build`를 실행하세요. 생성된 `index.html`도 함께 커밋합니다. 생성기 추가는 [기여 안내](CONTRIBUTING.md)를 참고하세요.
 
-## GitHub에 올리기
-
-이 폴더의 **내용 전체**를 저장소 루트에 넣으세요. `.github`, `.gitignore` 등 숨김 파일도 포함합니다.
-
-로컬 Git을 사용한다면 아래처럼 준비한 후, GitHub에서 만든 빈 저장소의 연결 안내에 따라 원격 주소를 추가하고 push하세요.
-
-```sh
-git init -b main
-git add .
-git commit -m "Initial LiteNansu release"
-```
-
-GitHub Actions는 Node 24의 Linux·Windows·macOS 환경에서 테스트·생성물 일치·짧은 실험을 검사하도록 설정되어 있습니다. CI에 실제 브라우저 화면 검사는 포함하지 않았습니다.
-
 ## 문서와 라이선스
 
 - [실험 방법과 해석](docs/EXPERIMENTS.md)
