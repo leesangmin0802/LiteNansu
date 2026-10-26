@@ -1,2 +1,2 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+index.html linguist-generated=true
+src/dashboard.html linguist-detectable=false
